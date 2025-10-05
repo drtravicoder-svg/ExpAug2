@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+// import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../../data/models/user.dart';
 import '../../data/repositories/user_repository.dart';
 import '../services/mock_auth_service.dart';
 
-// Firebase Auth instance provider
-final firebaseAuthProvider = Provider<firebase_auth.FirebaseAuth>((ref) {
-  return firebase_auth.FirebaseAuth.instance;
-});
+// Firebase Auth instance provider (disabled - Firebase not configured)
+// final firebaseAuthProvider = Provider<firebase_auth.FirebaseAuth>((ref) {
+//   return firebase_auth.FirebaseAuth.instance;
+// });
 
 // User repository provider
 final userRepositoryProvider = Provider<UserRepository>((ref) {
@@ -31,16 +31,18 @@ final currentUserProvider = Provider<User?>((ref) {
   return mockAuth.currentUser;
 });
 
-// Auth service provider
-final authServiceProvider = Provider<AuthService>((ref) {
-  final firebaseAuth = ref.watch(firebaseAuthProvider);
-  final userRepository = ref.watch(userRepositoryProvider);
-  return AuthService(firebaseAuth, userRepository);
-});
+// Auth service provider (disabled - Firebase not configured)
+// final authServiceProvider = Provider<AuthService>((ref) {
+//   final firebaseAuth = ref.watch(firebaseAuthProvider);
+//   final userRepository = ref.watch(userRepositoryProvider);
+//   return AuthService(firebaseAuth, userRepository);
+// });
 
 // Auth loading state provider
 final authLoadingProvider = StateProvider<bool>((ref) => false);
 
+// Firebase Auth Service (disabled - using mock for demo)
+/*
 class AuthService {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final UserRepository _userRepository;
@@ -141,6 +143,7 @@ class AuthService {
   // Get current user ID
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
 }
+*/
 
 class AuthException implements Exception {
   final String message;
@@ -150,12 +153,13 @@ class AuthException implements Exception {
   String toString() => message;
 }
 
-// Auth state notifier for complex auth operations
-final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  final authService = ref.watch(authServiceProvider);
-  return AuthNotifier(authService);
-});
+// Auth state notifier for complex auth operations (disabled - Firebase not configured)
+// final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+//   final authService = ref.watch(authServiceProvider);
+//   return AuthNotifier(authService);
+// });
 
+/*
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthService _authService;
 
@@ -224,6 +228,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 }
+*/
 
 // Auth state classes
 abstract class AuthState {

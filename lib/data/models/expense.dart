@@ -120,7 +120,6 @@ class Expense extends Equatable {
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
-}
 
   /// Helper getters
   bool get isPending => status == ExpenseStatus.pending;

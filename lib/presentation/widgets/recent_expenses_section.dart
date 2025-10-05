@@ -240,7 +240,7 @@ class ExpenseListItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(DesignTokens.borderRadius),
                 ),
                 child: Icon(
-                  _getCategoryIcon(expense.categoryId),
+                  _getCategoryIcon(expense.category),
                   color: DesignTokens.primaryBlue,
                 ),
               ),
@@ -250,7 +250,7 @@ class ExpenseListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      expense.description,
+                      expense.description ?? expense.title,
                       style: DesignTokens.subtitle.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -264,7 +264,7 @@ class ExpenseListItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          expense.categoryId, // TODO: Get actual category name
+                          expense.category,
                           style: TextStyle(
                             color: DesignTokens.inactiveGray,
                           ),
@@ -294,7 +294,7 @@ class ExpenseListItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Paid by ${expense.paidBy}', // TODO: Get actual user name
+                          'Paid by ${expense.payerId}',
                           style: TextStyle(
                             color: DesignTokens.primaryBlue,
                             fontWeight: FontWeight.w500,
@@ -364,7 +364,7 @@ class ExpenseListItem extends StatelessWidget {
     switch (status) {
       case ExpenseStatus.pending:
         return Colors.orange;
-      case ExpenseStatus.committed:
+      case ExpenseStatus.approved:
         return DesignTokens.liveGreen;
       case ExpenseStatus.rejected:
         return Colors.red;
@@ -375,8 +375,8 @@ class ExpenseListItem extends StatelessWidget {
     switch (status) {
       case ExpenseStatus.pending:
         return 'Pending';
-      case ExpenseStatus.committed:
-        return 'Split';
+      case ExpenseStatus.approved:
+        return 'Approved';
       case ExpenseStatus.rejected:
         return 'Rejected';
     }

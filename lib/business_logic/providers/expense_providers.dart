@@ -83,7 +83,7 @@ class ExpenseStats {
     final totalAmount = expenses.fold(0.0, (sum, expense) => sum + expense.amount);
     final totalCount = expenses.length;
     final pendingCount = expenses.where((e) => e.status == ExpenseStatus.pending).length;
-    final approvedCount = expenses.where((e) => e.status == ExpenseStatus.committed).length;
+    final approvedCount = expenses.where((e) => e.status == ExpenseStatus.approved).length; // Fixed: was ExpenseStatus.committed
     final rejectedCount = expenses.where((e) => e.status == ExpenseStatus.rejected).length;
     final averageAmount = totalCount > 0 ? totalAmount / totalCount : 0.0;
 

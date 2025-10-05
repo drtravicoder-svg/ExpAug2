@@ -1,12 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firebase Firestore integration disabled (not installed)
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/expense.dart';
 
+/// Expense Repository - Firebase Firestore implementation (currently disabled)
+/// Use MockExpenseRepository for testing without Firebase
 class ExpenseRepository {
-  final FirebaseFirestore _firestore;
+  // final FirebaseFirestore _firestore;
 
-  ExpenseRepository({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  ExpenseRepository();
+  // ExpenseRepository({
+  //   FirebaseFirestore? firestore
+  // }) : _firestore = firestore ?? FirebaseFirestore.instance;
 
+  // All Firebase methods are commented out until Firebase is installed
+  
+  /*
   Stream<List<Expense>> getRecentExpenses(String tripId, {int limit = 5}) {
     return _firestore
         .collection('expenses')
@@ -44,7 +52,6 @@ class ExpenseRepository {
     });
   }
 
-  // Get expense by ID
   Stream<Expense?> getExpenseById(String expenseId) {
     return _firestore
         .collection('expenses')
@@ -58,7 +65,6 @@ class ExpenseRepository {
     });
   }
 
-  // Get pending expenses for admin approval
   Stream<List<Expense>> getPendingExpenses(String tripId) {
     return _firestore
         .collection('expenses')
@@ -71,28 +77,25 @@ class ExpenseRepository {
     });
   }
 
-  // Approve expense
   Future<void> approveExpense(String expenseId, String approvedBy) async {
     await _firestore.collection('expenses').doc(expenseId).update({
-      'status': 'committed',
+      'status': 'approved', // Fixed: was 'committed'
       'approvedBy': approvedBy,
       'approvedAt': Timestamp.fromDate(DateTime.now()),
       'updatedAt': Timestamp.fromDate(DateTime.now()),
     });
   }
 
-  // Reject expense
   Future<void> rejectExpense(String expenseId, String rejectedBy, String? reason) async {
     await _firestore.collection('expenses').doc(expenseId).update({
       'status': 'rejected',
-      'approvedBy': rejectedBy,
-      'approvedAt': Timestamp.fromDate(DateTime.now()),
+      'rejectedBy': rejectedBy,
+      'rejectedAt': Timestamp.fromDate(DateTime.now()),
       'adminComment': reason,
       'updatedAt': Timestamp.fromDate(DateTime.now()),
     });
   }
 
-  // Get expenses by user
   Stream<List<Expense>> getUserExpenses(String userId) {
     return _firestore
         .collection('expenses')
@@ -104,15 +107,15 @@ class ExpenseRepository {
     });
   }
 
-  // Get expenses paid by user
   Stream<List<Expense>> getExpensesPaidBy(String userId) {
     return _firestore
         .collection('expenses')
-        .where('paidBy', isEqualTo: userId)
+        .where('payerId', isEqualTo: userId) // Fixed: was 'paidBy'
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) => Expense.fromFirestore(doc)).toList();
     });
   }
+  */
 }

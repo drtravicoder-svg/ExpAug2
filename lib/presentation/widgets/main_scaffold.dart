@@ -24,7 +24,8 @@ class MainBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentLocation = GoRouterState.of(context).location;
+    final state = GoRouterState.of(context);
+    final currentLocation = state.uri.toString();
     
     int getCurrentIndex() {
       if (currentLocation.startsWith('/home')) return 0;

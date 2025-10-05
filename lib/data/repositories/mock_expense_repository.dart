@@ -120,13 +120,12 @@ class MockExpenseRepository {
       final expense = _expenses[index];
       _expenses[index] = expense.copyWith(
         status: ExpenseStatus.approved,
-        approvedBy: [...expense.approvedBy, approvedBy],
         updatedAt: DateTime.now(),
       );
       _notifyListeners();
       
       if (kDebugMode) {
-        print('🎭 Mock Expense Repository: Approved expense "${expense.title}"');
+        print('🎭 Mock Expense Repository: Approved expense "${expense.title}" by $approvedBy');
       }
     }
   }
@@ -140,13 +139,12 @@ class MockExpenseRepository {
       final expense = _expenses[index];
       _expenses[index] = expense.copyWith(
         status: ExpenseStatus.rejected,
-        rejectedBy: [...expense.rejectedBy, rejectedBy],
         updatedAt: DateTime.now(),
       );
       _notifyListeners();
       
       if (kDebugMode) {
-        print('🎭 Mock Expense Repository: Rejected expense "${expense.title}"');
+        print('🎭 Mock Expense Repository: Rejected expense "${expense.title}" by $rejectedBy');
       }
     }
   }
@@ -163,78 +161,62 @@ class MockExpenseRepository {
       Expense(
         id: 'expense_demo_1',
         tripId: 'trip_active_demo',
+        payerId: 'demo_user_1',
         title: 'Hotel Booking',
         description: 'Beach resort accommodation for 3 nights',
         amount: 15000.0,
-        categoryId: 'accommodation',
-        paidBy: 'demo_user_1',
-        splitBetween: {'demo_user_1': 7500.0, 'demo_user_2': 7500.0},
-        receiptUrl: null,
+        currency: 'INR',
+        category: 'accommodation',
+        date: now.subtract(const Duration(days: 2)),
         status: ExpenseStatus.approved,
+        receiptPath: null,
         createdAt: now.subtract(const Duration(days: 2)),
         updatedAt: now.subtract(const Duration(days: 1)),
-        approvedBy: ['demo_user_1'],
-        rejectedBy: [],
-        tags: ['accommodation', 'hotel'],
-        location: 'Goa, India',
-        notes: 'Beachfront hotel with pool',
       ),
       Expense(
         id: 'expense_demo_2',
         tripId: 'trip_active_demo',
+        payerId: 'demo_user_2',
         title: 'Flight Tickets',
         description: 'Round trip flights Mumbai to Goa',
         amount: 12000.0,
-        categoryId: 'transport',
-        paidBy: 'demo_user_2',
-        splitBetween: {'demo_user_1': 6000.0, 'demo_user_2': 6000.0},
-        receiptUrl: null,
+        currency: 'INR',
+        category: 'transport',
+        date: now.subtract(const Duration(days: 3)),
         status: ExpenseStatus.approved,
+        receiptPath: null,
         createdAt: now.subtract(const Duration(days: 3)),
         updatedAt: now.subtract(const Duration(days: 2)),
-        approvedBy: ['demo_user_1'],
-        rejectedBy: [],
-        tags: ['transport', 'flight'],
-        location: 'Mumbai Airport',
-        notes: 'IndiGo flights',
       ),
       Expense(
         id: 'expense_demo_3',
         tripId: 'trip_active_demo',
+        payerId: 'demo_user_1',
         title: 'Dinner at Beach Shack',
         description: 'Seafood dinner for the group',
         amount: 2500.0,
-        categoryId: 'food',
-        paidBy: 'demo_user_1',
-        splitBetween: {'demo_user_1': 1250.0, 'demo_user_2': 1250.0},
-        receiptUrl: null,
+        currency: 'INR',
+        category: 'food',
+        date: now.subtract(const Duration(hours: 6)),
         status: ExpenseStatus.pending,
+        receiptPath: null,
         createdAt: now.subtract(const Duration(hours: 6)),
         updatedAt: now.subtract(const Duration(hours: 6)),
-        approvedBy: [],
-        rejectedBy: [],
-        tags: ['food', 'dinner'],
-        location: 'Baga Beach, Goa',
-        notes: 'Amazing seafood platter',
       ),
       Expense(
         id: 'expense_demo_4',
         tripId: 'trip_active_demo',
+        payerId: 'demo_user_2',
         title: 'Scuba Diving',
         description: 'Adventure sports activity',
         amount: 8000.0,
-        categoryId: 'activities',
-        paidBy: 'demo_user_2',
-        splitBetween: {'demo_user_1': 4000.0, 'demo_user_2': 4000.0},
-        receiptUrl: null,
+        currency: 'INR',
+        category: 'activities',
+        date: now.subtract(const Duration(hours: 2)),
         status: ExpenseStatus.pending,
+        receiptPath: null,
         createdAt: now.subtract(const Duration(hours: 2)),
         updatedAt: now.subtract(const Duration(hours: 2)),
-        approvedBy: [],
-        rejectedBy: [],
-        tags: ['activities', 'adventure'],
-        location: 'Grande Island, Goa',
-        notes: 'Professional diving with instructor',
       ),
     ];
   }

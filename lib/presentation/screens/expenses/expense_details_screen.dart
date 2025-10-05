@@ -97,90 +97,29 @@ class ExpenseDetailsScreen extends ConsumerWidget {
                         _DetailRow(
                           icon: Icons.person,
                           label: 'Paid by',
-                          value: expenseData.paidBy, // TODO: Get actual user name
+                          value: expenseData.payerId, // Fixed: was paidBy. TODO: Get actual user name
                         ),
                         _DetailRow(
                           icon: Icons.calendar_today,
                           label: 'Date',
-                          value: DateFormatter.formatDateTime(expenseData.createdAt),
+                          value: DateFormatter.formatDateTime(expenseData.date), // Fixed: use date field
                         ),
                         _DetailRow(
                           icon: Icons.category,
                           label: 'Category',
-                          value: expenseData.categoryId, // TODO: Get actual category name
+                          value: expenseData.category, // Fixed: was categoryId
                         ),
-                        if (expenseData.location != null)
-                          _DetailRow(
-                            icon: Icons.location_on,
-                            label: 'Location',
-                            value: expenseData.location!.address,
-                          ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // Participants
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Participants (${expenseData.participants.length})',
-                          style: DesignTokens.subtitle.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        ...expenseData.participants.map((participantId) {
-                          final splitAmount = expenseData.customSplit?[participantId] ??
-                              (expenseData.amount / expenseData.participants.length);
-                          
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 16,
-                                  backgroundColor: DesignTokens.primaryBlue,
-                                  child: Text(
-                                    participantId.substring(0, 1).toUpperCase(), // TODO: Get actual initials
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    participantId, // TODO: Get actual participant name
-                                    style: DesignTokens.subtitle,
-                                  ),
-                                ),
-                                Text(
-                                  CurrencyFormatter.format(splitAmount, expenseData.currency),
-                                  style: DesignTokens.subtitle.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: DesignTokens.primaryBlue,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Receipts
-                if (expenseData.receiptUrls.isNotEmpty) ...[
+                // Note: Participants and custom split features are not supported in current Expense model
+                // These fields (participants, customSplit) don't exist in the simplified Expense model
+                
+                // Receipt
+                if (expenseData.receiptPath != null && expenseData.receiptPath!.isNotEmpty) ...[
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -188,43 +127,20 @@ class ExpenseDetailsScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Receipts (${expenseData.receiptUrls.length})',
+                            'Receipt',
                             style: DesignTokens.subtitle.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 16),
-                          SizedBox(
-                            height: 100,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: expenseData.receiptUrls.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.network(
-                                      expenseData.receiptUrls[index],
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Container(
-                                          width: 100,
-                                          height: 100,
-                                          color: Colors.grey.shade200,
-                                          child: const Icon(
-                                            Icons.image_not_supported,
-                                            color: Colors.grey,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+                          Text(
+                            'Receipt path: ${expenseData.receiptPath}',
+                            style: DesignTokens.subtitle,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Receipt viewing is not yet implemented',
+                            style: TextStyle(color: Colors.grey),
                           ),
                         ],
                       ),
@@ -291,38 +207,8 @@ class ExpenseDetailsScreen extends ConsumerWidget {
                   ),
                 ],
 
-                // Admin Comment (if rejected)
-                if (expenseData.status == ExpenseStatus.rejected && expenseData.adminComment != null) ...[
-                  Card(
-                    color: Colors.red.shade50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.info, color: Colors.red.shade600),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Rejection Reason',
-                                style: DesignTokens.subtitle.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.red.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            expenseData.adminComment!,
-                            style: DesignTokens.subtitle,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                // Note: Admin comment feature not supported in current Expense model
+                // The adminComment field doesn't exist in the simplified Expense model
               ],
             ),
           );
@@ -365,7 +251,7 @@ class _StatusBadge extends StatelessWidget {
         icon = Icons.schedule;
         text = 'PENDING';
         break;
-      case ExpenseStatus.committed:
+      case ExpenseStatus.approved: // Fixed: was ExpenseStatus.committed
         color = Colors.green;
         icon = Icons.check_circle;
         text = 'APPROVED';

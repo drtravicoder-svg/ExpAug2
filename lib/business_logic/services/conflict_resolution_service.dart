@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firebase Firestore integration disabled (not installed)
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../../core/utils/error_handler.dart';
 import '../../data/models/expense.dart';
@@ -7,14 +8,15 @@ import '../../data/models/trip.dart';
 import 'offline_service.dart';
 
 /// Service for handling data conflicts during synchronization
+/// NOTE: Firebase integration is disabled - this service requires Firebase to function
 class ConflictResolutionService {
-  final FirebaseFirestore _firestore;
+  // final FirebaseFirestore _firestore;
   final OfflineService _offlineService;
 
   ConflictResolutionService({
-    FirebaseFirestore? firestore,
+    // FirebaseFirestore? firestore,
     OfflineService? offlineService,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+  }) : // _firestore = firestore ?? FirebaseFirestore.instance,
         _offlineService = offlineService ?? OfflineService();
 
   /// Resolve expense conflicts
@@ -50,8 +52,8 @@ class ConflictResolutionService {
 
   /// Resolve using last write wins strategy
   ConflictResolution _resolveLastWriteWins(Expense local, Expense remote) {
-    final localModified = local.updatedAt ?? local.createdAt;
-    final remoteModified = remote.updatedAt ?? remote.createdAt;
+    final localModified = local.updatedAt;
+    final remoteModified = remote.updatedAt;
     
     if (localModified.isAfter(remoteModified)) {
       return ConflictResolution(
@@ -78,21 +80,17 @@ class ConflictResolutionService {
     final merged = Expense(
       id: local.id,
       tripId: local.tripId,
+      payerId: local.payerId, // Fixed: was paidBy
       title: _selectMostRecent(local.title, remote.title, local.updatedAt, remote.updatedAt),
       description: _selectMostRecent(local.description, remote.description, local.updatedAt, remote.updatedAt),
       amount: _selectMostRecent(local.amount, remote.amount, local.updatedAt, remote.updatedAt),
-      categoryId: _selectMostRecent(local.categoryId, remote.categoryId, local.updatedAt, remote.updatedAt),
-      paidBy: local.paidBy, // Keep original payer
-      splitBetween: _mergeSplitBetween(local.splitBetween, remote.splitBetween),
-      receiptUrl: local.receiptUrl ?? remote.receiptUrl, // Keep any receipt
+      currency: _selectMostRecent(local.currency, remote.currency, local.updatedAt, remote.updatedAt),
+      category: _selectMostRecent(local.category, remote.category, local.updatedAt, remote.updatedAt), // Fixed: was categoryId
+      date: _selectMostRecent(local.date, remote.date, local.updatedAt, remote.updatedAt),
+      receiptPath: local.receiptPath ?? remote.receiptPath, // Fixed: was receiptUrl
       status: _mergeStatus(local.status, remote.status),
       createdAt: local.createdAt, // Keep original creation time
       updatedAt: DateTime.now(), // Set new update time
-      approvedBy: _mergeApprovedBy(local.approvedBy, remote.approvedBy),
-      rejectedBy: _mergeRejectedBy(local.rejectedBy, remote.rejectedBy),
-      tags: _mergeTags(local.tags, remote.tags),
-      location: local.location ?? remote.location,
-      notes: local.notes ?? remote.notes,
     );
 
     return ConflictResolution(
@@ -125,39 +123,16 @@ class ConflictResolutionService {
   }
 
   /// Select most recent value
-  T _selectMostRecent<T>(T localValue, T remoteValue, DateTime? localTime, DateTime? remoteTime) {
-    if (localTime == null && remoteTime == null) return localValue;
-    if (localTime == null) return remoteValue;
-    if (remoteTime == null) return localValue;
-    
+  T _selectMostRecent<T>(T localValue, T remoteValue, DateTime localTime, DateTime remoteTime) {
     return localTime.isAfter(remoteTime) ? localValue : remoteValue;
-  }
-
-  /// Merge split between maps
-  Map<String, double> _mergeSplitBetween(Map<String, double> local, Map<String, double> remote) {
-    final merged = <String, double>{};
-    
-    // Add all local entries
-    merged.addAll(local);
-    
-    // Add remote entries that don't exist locally or have higher values
-    for (final entry in remote.entries) {
-      if (!merged.containsKey(entry.key) || merged[entry.key]! < entry.value) {
-        merged[entry.key] = entry.value;
-      }
-    }
-    
-    return merged;
   }
 
   /// Merge expense status
   ExpenseStatus _mergeStatus(ExpenseStatus local, ExpenseStatus remote) {
-    // Priority: committed > approved > pending > draft > rejected
+    // Priority: approved > pending > rejected
     const statusPriority = {
-      ExpenseStatus.committed: 5,
-      ExpenseStatus.approved: 4,
-      ExpenseStatus.pending: 3,
-      ExpenseStatus.draft: 2,
+      ExpenseStatus.approved: 3, // Fixed: was ExpenseStatus.committed
+      ExpenseStatus.pending: 2,
       ExpenseStatus.rejected: 1,
     };
     
@@ -167,30 +142,8 @@ class ConflictResolutionService {
     return localPriority >= remotePriority ? local : remote;
   }
 
-  /// Merge approved by lists
-  List<String> _mergeApprovedBy(List<String> local, List<String> remote) {
-    final merged = <String>{};
-    merged.addAll(local);
-    merged.addAll(remote);
-    return merged.toList();
-  }
-
-  /// Merge rejected by lists
-  List<String> _mergeRejectedBy(List<String> local, List<String> remote) {
-    final merged = <String>{};
-    merged.addAll(local);
-    merged.addAll(remote);
-    return merged.toList();
-  }
-
-  /// Merge tags
-  List<String> _mergeTags(List<String> local, List<String> remote) {
-    final merged = <String>{};
-    merged.addAll(local);
-    merged.addAll(remote);
-    return merged.toList();
-  }
-
+  // Note: The following methods are disabled because they rely on Firebase Firestore
+  /*
   /// Detect conflicts in expense
   Future<List<ConflictDetection>> detectExpenseConflicts(String tripId) async {
     try {
@@ -235,15 +188,15 @@ class ConflictResolutionService {
       throw ErrorHandler.handleError(error, stackTrace);
     }
   }
+  */
 
   /// Check if expenses have conflicts
   bool _hasConflict(Expense local, Expense remote) {
     return local.title != remote.title ||
            local.amount != remote.amount ||
-           local.categoryId != remote.categoryId ||
+           local.category != remote.category || // Fixed: was categoryId
            local.description != remote.description ||
-           local.status != remote.status ||
-           !_mapsEqual(local.splitBetween, remote.splitBetween);
+           local.status != remote.status;
   }
 
   /// Get conflicting fields
@@ -252,27 +205,15 @@ class ConflictResolutionService {
     
     if (local.title != remote.title) conflicts.add('title');
     if (local.amount != remote.amount) conflicts.add('amount');
-    if (local.categoryId != remote.categoryId) conflicts.add('category');
+    if (local.category != remote.category) conflicts.add('category'); // Fixed: was categoryId
     if (local.description != remote.description) conflicts.add('description');
     if (local.status != remote.status) conflicts.add('status');
-    if (!_mapsEqual(local.splitBetween, remote.splitBetween)) conflicts.add('splitBetween');
     
     return conflicts;
   }
 
-  /// Check if maps are equal
-  bool _mapsEqual<K, V>(Map<K, V> map1, Map<K, V> map2) {
-    if (map1.length != map2.length) return false;
-    
-    for (final entry in map1.entries) {
-      if (!map2.containsKey(entry.key) || map2[entry.key] != entry.value) {
-        return false;
-      }
-    }
-    
-    return true;
-  }
-
+  // Note: Firebase-dependent methods are commented out
+  /*
   /// Apply conflict resolution
   Future<void> applyConflictResolution(ConflictResolution resolution) async {
     try {
@@ -336,6 +277,7 @@ class ConflictResolutionService {
       throw ErrorHandler.handleError(error, stackTrace);
     }
   }
+  */
 
   /// Get conflict resolution suggestions
   List<ConflictResolutionSuggestion> getResolutionSuggestions(ConflictDetection conflict) {
@@ -351,7 +293,7 @@ class ConflictResolutionService {
     
     // Suggest merge if fields don't overlap critically
     if (!conflict.conflictFields.contains('amount') || 
-        !conflict.conflictFields.contains('paidBy')) {
+        !conflict.conflictFields.contains('payerId')) { // Fixed: was paidBy
       suggestions.add(ConflictResolutionSuggestion(
         strategy: ConflictResolutionStrategy.mergeChanges,
         title: 'Merge Changes',

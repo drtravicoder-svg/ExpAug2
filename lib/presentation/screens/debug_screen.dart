@@ -77,7 +77,7 @@ class DebugScreen extends ConsumerWidget {
                                 Text('ID: ${trip.id}'),
                                 Text('Status: ${trip.status}'),
                                 Text('Members: ${trip.members.length}'),
-                                Text('Budget: ${trip.budget}'),
+                                Text('Budget: ${trip.budgetAmount}'),
                               ],
                             )
                           : const Text('❌ No active trip'),

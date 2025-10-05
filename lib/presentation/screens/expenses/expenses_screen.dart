@@ -181,7 +181,7 @@ class ExpenseListItem extends StatelessWidget {
         statusColor = Colors.orange;
         statusIcon = Icons.schedule;
         break;
-      case ExpenseStatus.committed:
+      case ExpenseStatus.approved:
         statusColor = Colors.green;
         statusIcon = Icons.check_circle;
         break;

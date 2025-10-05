@@ -108,7 +108,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/add-expense',
         name: 'addExpense',
         builder: (context, state) {
-          final tripId = state.queryParameters['tripId'];
+          final tripId = state.uri.queryParameters['tripId'];
           return AddExpenseScreen(tripId: tripId);
         },
       ),
@@ -131,7 +131,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         null,
         context: 'Router Error',
         additionalData: {
-          'location': state.location,
+          'location': state.uri.toString(),
           'path': state.path,
           'fullPath': state.fullPath,
         },
@@ -170,7 +170,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 if (AppConfig.isDebug) ...[
                   const SizedBox(height: 16),
                   Text(
-                    'Debug Info: ${state.location}',
+                    'Debug Info: ${state.uri.toString()}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.outline,
                     ),

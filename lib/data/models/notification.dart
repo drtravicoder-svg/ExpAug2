@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'notification.freezed.dart';
@@ -33,30 +33,31 @@ class AppNotification with _$AppNotification {
   factory AppNotification.fromJson(Map<String, dynamic> json) =>
       _$AppNotificationFromJson(json);
 
-  factory AppNotification.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return AppNotification(
-      id: doc.id,
-      userId: data['userId'] ?? '',
-      tripId: data['tripId'],
-      type: NotificationType.values.firstWhere(
-        (e) => e.toString() == 'NotificationType.${data['type']}',
-        orElse: () => NotificationType.expenseAdded,
-      ),
-      title: data['title'] ?? '',
-      body: data['body'] ?? '',
-      data: data['data'] as Map<String, dynamic>?,
-      read: data['read'] ?? false,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      expiresAt: data['expiresAt'] != null
-          ? (data['expiresAt'] as Timestamp).toDate()
-          : null,
-    );
-  }
+  // Firebase Firestore integration disabled (uncomment when Firebase is enabled)
+  // factory AppNotification.fromFirestore(DocumentSnapshot doc) {
+  //   final data = doc.data() as Map<String, dynamic>;
+  //   return AppNotification(
+  //     id: doc.id,
+  //     userId: data['userId'] ?? '',
+  //     tripId: data['tripId'],
+  //     type: NotificationType.values.firstWhere(
+  //       (e) => e.toString() == 'NotificationType.${data['type']}',
+  //       orElse: () => NotificationType.expenseAdded,
+  //     ),
+  //     title: data['title'] ?? '',
+  //     body: data['body'] ?? '',
+  //     data: data['data'] as Map<String, dynamic>?,
+  //     read: data['read'] ?? false,
+  //     createdAt: (data['createdAt'] as Timestamp).toDate(),
+  //     expiresAt: data['expiresAt'] != null
+  //         ? (data['expiresAt'] as Timestamp).toDate()
+  //         : null,
+  //   );
+  // }
 }
 
 extension AppNotificationExtensions on AppNotification {
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toJson() {
     return {
       'userId': userId,
       'tripId': tripId,
@@ -65,8 +66,8 @@ extension AppNotificationExtensions on AppNotification {
       'body': body,
       'data': data,
       'read': read,
-      'createdAt': Timestamp.fromDate(createdAt),
-      'expiresAt': expiresAt != null ? Timestamp.fromDate(expiresAt!) : null,
+      'createdAt': createdAt.toIso8601String(),
+      'expiresAt': expiresAt?.toIso8601String(),
     };
   }
 

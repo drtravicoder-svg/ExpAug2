@@ -84,30 +84,25 @@ class ActiveTripCard extends ConsumerWidget {
                   children: [
                     Consumer(
                       builder: (context, ref, child) {
-                        final tripStats = ref.watch(tripStatsProvider(trip.id));
+                        final totalExpenses = ref.watch(tripTotalExpensesProvider(trip.id));
                         return _StatItem(
                           icon: Icons.currency_rupee,
-                          value: CurrencyFormatter.formatCompact(tripStats.totalExpenses, trip.currency),
+                          value: CurrencyFormatter.formatCompact(totalExpenses, trip.currency),
                           label: 'Total Expenses',
                         );
                       },
                     ),
-                    Consumer(
-                      builder: (context, ref, child) {
-                        final tripStats = ref.watch(tripStatsProvider(trip.id));
-                        return _StatItem(
-                          icon: Icons.people,
-                          value: '${tripStats.memberCount}',
-                          label: 'Members',
-                        );
-                      },
+                    _StatItem(
+                      icon: Icons.people,
+                      value: '${trip.members.length}',
+                      label: 'Members',
                     ),
                     Consumer(
                       builder: (context, ref, child) {
-                        final tripStats = ref.watch(tripStatsProvider(trip.id));
+                        final expenseStats = ref.watch(expenseStatsProvider(trip.id));
                         return _StatItem(
                           icon: Icons.receipt_long,
-                          value: '${tripStats.expenseCount}',
+                          value: '${expenseStats.totalCount}',
                           label: 'Expenses',
                         );
                       },

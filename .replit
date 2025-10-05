@@ -1,0 +1,7 @@
+modules = ["bash", "web", "ruby-3.2", "java-graalvm22.3"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+packages = ["unzip"]

@@ -59,7 +59,7 @@ class ExpenseDetailsScreen extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                expenseData.description,
+                                expenseData.description ?? '',
                                 style: DesignTokens.header,
                               ),
                             ),

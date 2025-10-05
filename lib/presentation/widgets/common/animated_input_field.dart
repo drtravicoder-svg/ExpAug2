@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 /// An animated input field with floating labels and smooth transitions
 class AnimatedInputField extends StatefulWidget {
   final String label;
+  final String? labelText;
   final String? hint;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
@@ -25,6 +26,7 @@ class AnimatedInputField extends StatefulWidget {
   const AnimatedInputField({
     super.key,
     required this.label,
+    this.labelText,
     this.hint,
     this.controller,
     this.validator,

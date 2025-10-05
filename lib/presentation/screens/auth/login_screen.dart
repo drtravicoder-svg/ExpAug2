@@ -50,30 +50,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _initializeAuth() async {
-    try {
-      _authService = EnhancedAuthService();
-
-      // Check if biometric authentication is available
-      final isAvailable = await _authService!.isBiometricAvailable();
-
-      // Check if user has enabled biometric auth
-      final storage = StorageService();
-      final biometricEnabled = await storage.isBiometricEnabled();
-
-      if (mounted) {
-        setState(() {
-          _biometricAvailable = isAvailable && biometricEnabled;
-        });
-      }
-
-      // Auto-login with biometrics if enabled and user was previously logged in
-      final userId = await storage.getUserId();
-      if (userId != null && _biometricAvailable) {
-        _handleBiometricLogin();
-      }
-    } catch (error, stackTrace) {
-      await ErrorHandler.logError(error, stackTrace, context: 'Login Init');
-    }
+    // EnhancedAuthService is disabled - Firebase/biometric auth not available
+    // try {
+    //   _authService = EnhancedAuthService();
+    //
+    //   // Check if biometric authentication is available
+    //   final isAvailable = await _authService!.isBiometricAvailable();
+    //
+    //   // Check if user has enabled biometric auth
+    //   final storage = StorageService();
+    //   final biometricEnabled = await storage.isBiometricEnabled();
+    //
+    //   if (mounted) {
+    //     setState(() {
+    //       _biometricAvailable = isAvailable && biometricEnabled;
+    //     });
+    //   }
+    //
+    //   // Auto-login with biometrics if enabled and user was previously logged in
+    //   final userId = await storage.getUserId();
+    //   if (userId != null && _biometricAvailable) {
+    //     _handleBiometricLogin();
+    //   }
+    // } catch (error, stackTrace) {
+    //   await ErrorHandler.logError(error, stackTrace, context: 'Login Init');
+    // }
   }
 
   Future<void> _handleLogin() async {
@@ -82,11 +83,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      if (_authService == null) {
-        throw Exception('Authentication service not initialized');
-      }
-
-      final user = await _authService!.signInWithEmailAndPassword(
+      // EnhancedAuthService is disabled - use MockAuthService through provider
+      final mockAuth = ref.read(mockAuthServiceProvider);
+      
+      final user = await mockAuth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
@@ -112,109 +112,117 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handlePhoneLogin() async {
-    if (_phoneController.text.trim().isEmpty) {
-      _showErrorSnackBar('Please enter your phone number');
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      if (_authService == null) {
-        throw Exception('Authentication service not initialized');
-      }
-
-      await _authService!.signInWithPhoneNumber(
-        phoneNumber: _phoneController.text.trim(),
-        onCodeSent: (verificationId) {
-          setState(() {
-            _verificationId = verificationId;
-            _showOTPField = true;
-            _isLoading = false;
-          });
-          _showSuccessSnackBar('OTP sent to your phone');
-        },
-        onError: (error) {
-          setState(() => _isLoading = false);
-          _showErrorSnackBar(error);
-        },
-      );
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        _showErrorSnackBar(ErrorHandler.getUserMessage(e));
-      }
-    }
+    // Phone login disabled - Firebase auth not available
+    _showErrorSnackBar('Phone login is not available in demo mode');
+    // if (_phoneController.text.trim().isEmpty) {
+    //   _showErrorSnackBar('Please enter your phone number');
+    //   return;
+    // }
+    //
+    // setState(() => _isLoading = true);
+    //
+    // try {
+    //   if (_authService == null) {
+    //     throw Exception('Authentication service not initialized');
+    //   }
+    //
+    //   await _authService!.signInWithPhoneNumber(
+    //     phoneNumber: _phoneController.text.trim(),
+    //     onCodeSent: (verificationId) {
+    //       setState(() {
+    //         _verificationId = verificationId;
+    //         _showOTPField = true;
+    //         _isLoading = false;
+    //       });
+    //       _showSuccessSnackBar('OTP sent to your phone');
+    //     },
+    //     onError: (error) {
+    //       setState(() => _isLoading = false);
+    //       _showErrorSnackBar(error);
+    //     },
+    //   );
+    // } catch (e) {
+    //   if (mounted) {
+    //     setState(() => _isLoading = false);
+    //     _showErrorSnackBar(ErrorHandler.getUserMessage(e));
+    //   }
+    // }
   }
 
   Future<void> _handleOTPVerification() async {
-    if (_otpController.text.trim().isEmpty) {
-      _showErrorSnackBar('Please enter the OTP');
-      return;
-    }
-
-    if (_verificationId == null) {
-      _showErrorSnackBar('Verification ID not found. Please try again.');
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      if (_authService == null) {
-        throw Exception('Authentication service not initialized');
-      }
-
-      final user = await _authService!.verifyOTPCode(
-        verificationId: _verificationId!,
-        smsCode: _otpController.text.trim(),
-      );
-
-      if (mounted) {
-        context.go('/home');
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        _showErrorSnackBar(ErrorHandler.getUserMessage(e));
-      }
-    }
+    // OTP verification disabled - Firebase auth not available
+    _showErrorSnackBar('OTP verification is not available in demo mode');
+    // if (_otpController.text.trim().isEmpty) {
+    //   _showErrorSnackBar('Please enter the OTP');
+    //   return;
+    // }
+    //
+    // if (_verificationId == null) {
+    //   _showErrorSnackBar('Verification ID not found. Please try again.');
+    //   return;
+    // }
+    //
+    // setState(() => _isLoading = true);
+    //
+    // try {
+    //   if (_authService == null) {
+    //     throw Exception('Authentication service not initialized');
+    //   }
+    //
+    //   final user = await _authService!.verifyOTPCode(
+    //     verificationId: _verificationId!,
+    //     smsCode: _otpController.text.trim(),
+    //   );
+    //
+    //   if (mounted) {
+    //     context.go('/home');
+    //   }
+    // } catch (e) {
+    //   if (mounted) {
+    //     setState(() => _isLoading = false);
+    //     _showErrorSnackBar(ErrorHandler.getUserMessage(e));
+    //   }
+    // }
   }
 
   Future<void> _handleBiometricLogin() async {
-    try {
-      if (_authService == null) return;
-
-      final isAuthenticated = await _authService!.authenticateWithBiometrics(
-        reason: 'Please authenticate to access your account',
-      );
-
-      if (isAuthenticated && mounted) {
-        context.go('/home');
-      }
-    } catch (e) {
-      if (mounted) {
-        _showErrorSnackBar('Biometric authentication failed');
-      }
-    }
+    // Biometric login disabled - Firebase auth not available
+    _showErrorSnackBar('Biometric login is not available in demo mode');
+    // try {
+    //   if (_authService == null) return;
+    //
+    //   final isAuthenticated = await _authService!.authenticateWithBiometrics(
+    //     reason: 'Please authenticate to access your account',
+    //   );
+    //
+    //   if (isAuthenticated && mounted) {
+    //     context.go('/home');
+    //   }
+    // } catch (e) {
+    //   if (mounted) {
+    //     _showErrorSnackBar('Biometric authentication failed');
+    //   }
+    // }
   }
 
   Future<void> _handleForgotPassword() async {
-    if (_emailController.text.trim().isEmpty) {
-      _showErrorSnackBar('Please enter your email address');
-      return;
-    }
-
-    try {
-      if (_authService == null) {
-        throw Exception('Authentication service not initialized');
-      }
-
-      await _authService!.sendPasswordResetEmail(_emailController.text.trim());
-      _showSuccessSnackBar('Password reset email sent');
-    } catch (e) {
-      _showErrorSnackBar(ErrorHandler.getUserMessage(e));
-    }
+    // Password reset disabled - Firebase auth not available
+    _showErrorSnackBar('Password reset is not available in demo mode');
+    // if (_emailController.text.trim().isEmpty) {
+    //   _showErrorSnackBar('Please enter your email address');
+    //   return;
+    // }
+    //
+    // try {
+    //   if (_authService == null) {
+    //     throw Exception('Authentication service not initialized');
+    //   }
+    //
+    //   await _authService!.sendPasswordResetEmail(_emailController.text.trim());
+    //   _showSuccessSnackBar('Password reset email sent');
+    // } catch (e) {
+    //   _showErrorSnackBar(ErrorHandler.getUserMessage(e));
+    // }
   }
 
   void _showErrorSnackBar(String message) {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// An animated button with loading states and smooth transitions
 class AnimatedButton extends StatefulWidget {
   final String text;
+  final Widget? child;
   final VoidCallback? onPressed;
   final bool isLoading;
   final bool isDisabled;
@@ -19,6 +20,7 @@ class AnimatedButton extends StatefulWidget {
   const AnimatedButton({
     super.key,
     required this.text,
+    this.child,
     this.onPressed,
     this.isLoading = false,
     this.isDisabled = false,

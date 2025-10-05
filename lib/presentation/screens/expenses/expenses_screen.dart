@@ -210,7 +210,7 @@ class ExpenseListItem extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      expense.description,
+                      expense.description ?? '',
                       style: DesignTokens.subtitle.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -240,7 +240,7 @@ class ExpenseListItem extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Paid by ${expense.paidBy}', // TODO: Get actual user name
+                'Paid by ${expense.payerId}', // TODO: Get actual user name
                 style: TextStyle(
                   color: Colors.grey.shade600,
                   fontSize: 12,

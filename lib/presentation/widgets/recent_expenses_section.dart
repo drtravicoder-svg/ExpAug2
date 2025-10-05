@@ -339,8 +339,8 @@ class ExpenseListItem extends StatelessWidget {
     );
   }
 
-  IconData _getCategoryIcon(String categoryId) {
-    switch (categoryId.toLowerCase()) {
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
       case 'food':
         return Icons.restaurant;
       case 'transport':

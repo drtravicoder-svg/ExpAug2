@@ -580,91 +580,32 @@ class EnhancedTripCard extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // Stats row with real data
-            Consumer(
-              builder: (context, ref, child) {
-                final tripStats = ref.watch(tripStatsProvider(trip.id));
-                return tripStats.when(
-                  data: (stats) => Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _StatItem(
-                        icon: Icons.attach_money,
-                        value: CurrencyFormatter.formatCompact(stats.totalExpenses, trip.currency),
-                        label: 'Total Expenses',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                      _StatItem(
-                        icon: Icons.people,
-                        value: '${stats.memberCount}',
-                        label: 'Members',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                      _StatItem(
-                        icon: Icons.receipt_long,
-                        value: '${stats.expenseCount}',
-                        label: 'Expenses',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                    ],
-                  ),
-                  loading: () => Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _StatItem(
-                        icon: Icons.attach_money,
-                        value: '...',
-                        label: 'Total Expenses',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                      _StatItem(
-                        icon: Icons.people,
-                        value: '...',
-                        label: 'Members',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                      _StatItem(
-                        icon: Icons.receipt_long,
-                        value: '...',
-                        label: 'Expenses',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                    ],
-                  ),
-                  error: (_, __) => Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _StatItem(
-                        icon: Icons.attach_money,
-                        value: '0',
-                        label: 'Total Expenses',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                      _StatItem(
-                        icon: Icons.people,
-                        value: '0',
-                        label: 'Members',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                      _StatItem(
-                        icon: Icons.receipt_long,
-                        value: '0',
-                        label: 'Expenses',
-                        textColor: textColor,
-                        subtitleColor: subtitleColor,
-                      ),
-                    ],
-                  ),
-                );
-              },
+            // Stats row with trip data
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _StatItem(
+                  icon: Icons.attach_money,
+                  value: trip.budgetAmount > 0 ? CurrencyFormatter.formatCompact(trip.budgetAmount, trip.currency) : '-',
+                  label: 'Budget',
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                ),
+                _StatItem(
+                  icon: Icons.people,
+                  value: '${trip.memberCount}',
+                  label: 'Members',
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                ),
+                _StatItem(
+                  icon: Icons.calendar_month,
+                  value: '${trip.durationInDays}',
+                  label: 'Days',
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                ),
+              ],
             ),
             const SizedBox(height: 20),
 
@@ -787,7 +728,7 @@ class EnhancedTripCard extends ConsumerWidget {
     try {
       switch (action) {
         case 'activate':
-          await repository.activateTrip(trip.id);
+          await repository.setTripActive(trip.id);
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

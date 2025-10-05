@@ -49,9 +49,12 @@ class User extends Equatable {
   final String id;
   final String email;
   final String? phone;
+  final String? phoneNumber;
   final String displayName;
   final UserRole role;
+  final bool isActive;
   final DateTime createdAt;
+  final DateTime updatedAt;
   final DateTime? lastLoginAt;
   final UserPreferences preferences;
   final String? avatarUrl;
@@ -60,9 +63,12 @@ class User extends Equatable {
     required this.id,
     required this.email,
     this.phone,
+    this.phoneNumber,
     required this.displayName,
     required this.role,
+    this.isActive = true,
     required this.createdAt,
+    required this.updatedAt,
     this.lastLoginAt,
     this.preferences = const UserPreferences(),
     this.avatarUrl,
@@ -73,12 +79,15 @@ class User extends Equatable {
       id: json['id'],
       email: json['email'],
       phone: json['phone'],
+      phoneNumber: json['phoneNumber'],
       displayName: json['displayName'],
       role: UserRole.values.firstWhere(
         (e) => e.toString() == 'UserRole.${json['role']}',
         orElse: () => UserRole.member,
       ),
+      isActive: json['isActive'] ?? true,
       createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
       lastLoginAt: json['lastLoginAt'] != null 
           ? DateTime.parse(json['lastLoginAt'])
           : null,
@@ -94,9 +103,12 @@ class User extends Equatable {
       'id': id,
       'email': email,
       'phone': phone,
+      'phoneNumber': phoneNumber,
       'displayName': displayName,
       'role': role.toString().split('.').last,
+      'isActive': isActive,
       'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
       'lastLoginAt': lastLoginAt?.toIso8601String(),
       'preferences': preferences.toJson(),
       'avatarUrl': avatarUrl,
@@ -107,9 +119,12 @@ class User extends Equatable {
     String? id,
     String? email,
     String? phone,
+    String? phoneNumber,
     String? displayName,
     UserRole? role,
+    bool? isActive,
     DateTime? createdAt,
+    DateTime? updatedAt,
     DateTime? lastLoginAt,
     UserPreferences? preferences,
     String? avatarUrl,
@@ -118,16 +133,18 @@ class User extends Equatable {
       id: id ?? this.id,
       email: email ?? this.email,
       phone: phone ?? this.phone,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       displayName: displayName ?? this.displayName,
       role: role ?? this.role,
+      isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       preferences: preferences ?? this.preferences,
       avatarUrl: avatarUrl ?? this.avatarUrl,
     );
   }
 
-  // Helper getters
   bool get isAdmin => role == UserRole.admin;
   bool get isMember => role == UserRole.member;
   String get initials {
@@ -143,9 +160,12 @@ class User extends Equatable {
     id,
     email,
     phone,
+    phoneNumber,
     displayName,
     role,
+    isActive,
     createdAt,
+    updatedAt,
     lastLoginAt,
     preferences,
     avatarUrl,

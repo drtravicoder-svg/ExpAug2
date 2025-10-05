@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/design_tokens.dart';
 import '../../../business_logic/providers/trip_providers.dart';
+import '../../../data/models/trip.dart';
 
 class TripDetailsScreen extends ConsumerWidget {
   final String tripId;
@@ -14,7 +15,7 @@ class TripDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final trip = ref.watch(tripProvider(tripId));
+    final trip = ref.watch(tripByIdProvider(tripId));
 
     return Scaffold(
       appBar: AppBar(
@@ -255,7 +256,7 @@ class TripDetailsScreen extends ConsumerWidget {
               Text('Error loading trip: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => ref.invalidate(tripProvider(tripId)),
+                onPressed: () => ref.invalidate(tripByIdProvider(tripId)),
                 child: const Text('Retry'),
               ),
             ],
@@ -267,6 +268,8 @@ class TripDetailsScreen extends ConsumerWidget {
 
   Color _getStatusColor(TripStatus status) {
     switch (status) {
+      case TripStatus.planning:
+        return Colors.orange;
       case TripStatus.active:
         return DesignTokens.primaryBlue;
       case TripStatus.closed:

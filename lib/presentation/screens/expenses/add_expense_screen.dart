@@ -291,9 +291,9 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
             // Title Field
             AnimatedInputField(
               controller: _titleController,
-              labelText: 'Title',
-              hintText: 'Expense title',
-              prefixIcon: Icons.title,
+              label: 'Title',
+              hint: 'Expense title',
+              prefixIcon: const Icon(Icons.title),
               validator: (value) => Validators.required(value, fieldName: 'Title'),
               textInputAction: TextInputAction.next,
             ),
@@ -302,9 +302,9 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
             // Description Field
             AnimatedInputField(
               controller: _descriptionController,
-              labelText: 'Description',
-              hintText: 'What did you spend on?',
-              prefixIcon: Icons.description,
+              label: 'Description',
+              hint: 'What did you spend on?',
+              prefixIcon: const Icon(Icons.description),
               maxLines: 2,
               textInputAction: TextInputAction.next,
             ),
@@ -313,9 +313,9 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
             // Amount Field
             AnimatedInputField(
               controller: _amountController,
-              labelText: 'Amount',
-              hintText: '0.00',
-              prefixIcon: Icons.attach_money,
+              label: 'Amount',
+              hint: '0.00',
+              prefixIcon: const Icon(Icons.attach_money),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               validator: Validators.amount,
               textInputAction: TextInputAction.next,
@@ -333,13 +333,13 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
                 ),
                 validator: (value) => Validators.required(value, fieldName: 'Category'),
                 items: _getCategories().map((category) {
-                  return DropdownMenuItem(
-                    value: category['id'],
+                  return DropdownMenuItem<String>(
+                    value: category['id'] as String,
                     child: Row(
                       children: [
-                        Icon(category['icon'], size: 20, color: DesignTokens.primaryColor),
+                        Icon(category['icon'] as IconData, size: 20, color: DesignTokens.primaryColor),
                         const SizedBox(width: DesignTokens.spacing8),
-                        Text(category['name']),
+                        Text(category['name'] as String),
                       ],
                     ),
                   );
@@ -354,9 +354,9 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
             // Location Field (Optional)
             AnimatedInputField(
               controller: TextEditingController(text: _location),
-              labelText: 'Location (Optional)',
-              hintText: 'Where was this expense?',
-              prefixIcon: Icons.location_on,
+              label: 'Location (Optional)',
+              hint: 'Where was this expense?',
+              prefixIcon: const Icon(Icons.location_on),
               textInputAction: TextInputAction.next,
               onChanged: (value) => _location = value,
             ),
@@ -383,7 +383,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
                     if (_selectedTrip != null)
                       Consumer(
                         builder: (context, ref, child) {
-                          final trip = ref.watch(tripProvider(_selectedTrip!));
+                          final trip = ref.watch(tripByIdProvider(_selectedTrip!));
                           return trip.when(
                             data: (tripData) {
                               if (tripData == null) return const Text('Trip not found');
@@ -417,9 +417,9 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
             // Notes Field (Optional)
             AnimatedInputField(
               controller: _notesController,
-              labelText: 'Notes (Optional)',
-              hintText: 'Additional notes about this expense',
-              prefixIcon: Icons.note,
+              label: 'Notes (Optional)',
+              hint: 'Additional notes about this expense',
+              prefixIcon: const Icon(Icons.note),
               maxLines: 3,
               textInputAction: TextInputAction.done,
             ),
@@ -443,49 +443,50 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
                       ],
                     ),
                     const SizedBox(height: DesignTokens.spacing16),
-                    if (_receiptImage != null) ...[
-                      Container(
-                        width: double.infinity,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(DesignTokens.borderRadius8),
-                          image: DecorationImage(
-                            image: FileImage(_receiptImage!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                    // Receipt image display disabled - image_picker not installed
+                    // if (_receiptImage != null) ...[
+                    //   Container(
+                    //     width: double.infinity,
+                    //     height: 200,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(DesignTokens.borderRadius8),
+                    //       image: DecorationImage(
+                    //         image: FileImage(_receiptImage!),
+                    //         fit: BoxFit.cover,
+                    //       ),
+                    //     ),
+                    //   ),
+                    //   const SizedBox(height: DesignTokens.spacing12),
+                    //   Row(
+                    //     children: [
+                    //       Expanded(
+                    //         child: OutlinedButton.icon(
+                    //           onPressed: _showImagePickerOptions,
+                    //           icon: const Icon(Icons.edit),
+                    //           label: const Text('Change Receipt'),
+                    //         ),
+                    //       ),
+                    //       const SizedBox(width: DesignTokens.spacing8),
+                    //       OutlinedButton(
+                    //         onPressed: () {
+                    //           setState(() {
+                    //             _receiptImage = null;
+                    //           });
+                    //         },
+                    //         child: const Icon(Icons.delete),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ] else ...[
+                    OutlinedButton.icon(
+                      onPressed: _showImagePickerOptions,
+                      icon: const Icon(Icons.camera_alt),
+                      label: const Text('Add Receipt'),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
                       ),
-                      const SizedBox(height: DesignTokens.spacing12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: _showImagePickerOptions,
-                              icon: const Icon(Icons.edit),
-                              label: const Text('Change Receipt'),
-                            ),
-                          ),
-                          const SizedBox(width: DesignTokens.spacing8),
-                          OutlinedButton(
-                            onPressed: () {
-                              setState(() {
-                                _receiptImage = null;
-                              });
-                            },
-                            child: const Icon(Icons.delete),
-                          ),
-                        ],
-                      ),
-                    ] else ...[
-                      OutlinedButton.icon(
-                        onPressed: _showImagePickerOptions,
-                        icon: const Icon(Icons.camera_alt),
-                        label: const Text('Add Receipt'),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                        ),
-                      ),
-                    ],
+                    ),
+                    // ],
                   ],
                 ),
               ),
@@ -494,6 +495,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> with Ticker
 
             // Submit Button
             AnimatedButton(
+              text: 'Add Expense',
               onPressed: _isLoading ? null : _handleSubmit,
               isLoading: _isLoading,
               child: const Text(

@@ -115,7 +115,7 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Preferences',
             items: [
               _SettingsItem(
-                icon: Icons.notifications_outline,
+                icon: Icons.notifications_outlined,
                 title: 'Notifications',
                 subtitle: 'Manage notification preferences',
                 onTap: () {
@@ -264,7 +264,7 @@ class SettingsScreen extends ConsumerWidget {
 
     if (confirmed == true) {
       try {
-        final authService = ref.read(authServiceProvider);
+        final authService = ref.read(mockAuthServiceProvider);
         await authService.signOut();
         if (context.mounted) {
           context.go('/login');

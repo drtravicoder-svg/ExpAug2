@@ -11,7 +11,7 @@ class AppTheme {
         foregroundColor: DesignTokens.white,
         elevation: 0,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: DesignTokens.cardElevation,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(DesignTokens.borderRadius),

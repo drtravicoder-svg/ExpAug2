@@ -11,6 +11,9 @@ class DesignTokens {
   static const Color liveGreen = Color(0xFF4CAF50);
   static const Color backgroundLight = Color(0xFFF5F5F5);
   static const Color textSecondary = Color(0xFF757575);
+  static const Color surfaceColor = Colors.white;
+  static const Color borderColor = Color(0xFFE0E0E0);
+  static const Color textPrimary = Color(0xFF212121);
   
   // Text Styles
   static const TextStyle header = TextStyle(
@@ -49,6 +52,12 @@ class DesignTokens {
     color: textSecondary,
   );
 
+  static const TextStyle bodyMedium = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+    color: textPrimary,
+  );
+
   static const TextStyle stats = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
@@ -75,6 +84,7 @@ class DesignTokens {
   // Border Radius
   static const double borderRadius = 12.0;
   static const double borderRadius12 = 12.0;
+  static const double borderRadius8 = 8.0;
 
   // Elevation
   static const double cardElevation = 2.0;

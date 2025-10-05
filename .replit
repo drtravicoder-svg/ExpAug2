@@ -1,6 +1,7 @@
-modules = ["bash", "web", "ruby-3.2", "java-graalvm22.3"]
+modules = ["bash", "web", "ruby-3.2", "java-graalvm22.3", "python-3.11"]
 [agent]
 expertMode = true
+integrations = ["github:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
